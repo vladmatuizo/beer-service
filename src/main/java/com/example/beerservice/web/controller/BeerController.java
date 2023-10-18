@@ -2,6 +2,7 @@ package com.example.beerservice.web.controller;
 
 import com.example.beerservice.service.BeerService;
 import com.example.beerservice.web.model.BeerDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class BeerController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createBeer(@RequestBody BeerDto beerDto) {
+    public ResponseEntity<?> createBeer(@Valid @RequestBody BeerDto beerDto) {
         final BeerDto savedBeer = beerService.create(beerDto);
         return ResponseEntity
                 .created(URI.create(String.format("/api/v1/beer/%s", savedBeer.getId().toString())))
@@ -36,7 +37,7 @@ public class BeerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateBeer(@PathVariable UUID id, @RequestBody BeerDto beerDto) {
+    public ResponseEntity<?> updateBeer(@PathVariable UUID id, @Valid @RequestBody BeerDto beerDto) {
         beerService.update(id, beerDto);
         return ResponseEntity.noContent().build();
     }
