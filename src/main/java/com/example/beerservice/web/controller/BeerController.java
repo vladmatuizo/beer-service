@@ -27,7 +27,7 @@ public class BeerController {
         return ResponseEntity.ok(beerService.getBeerById(beerId));
     }
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<?> createBeer(@RequestBody BeerDto beerDto) {
         final BeerDto savedBeer = beerService.create(beerDto);
         return ResponseEntity

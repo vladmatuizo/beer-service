@@ -1,13 +1,18 @@
 package com.example.beerservice.service;
 
+import com.example.beerservice.repository.BeerRepository;
 import com.example.beerservice.web.model.BeerDto;
 import com.example.beerservice.web.model.BeerStyle;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class DefaultBeerService implements BeerService {
+
+    private final BeerRepository beerRepository;
     @Override
     public BeerDto getBeerById(UUID beerId) {
         return BeerDto.builder().id(UUID.randomUUID())
