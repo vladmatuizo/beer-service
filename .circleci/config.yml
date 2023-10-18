@@ -30,7 +30,9 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: ./gradlew --max-workers 2 downloadDependencies
+      - run: |
+          chmod +x ./gradlew
+          ./gradlew --max-workers 2 downloadDependencies
 
       - save_cache:
           paths:
