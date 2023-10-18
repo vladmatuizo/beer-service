@@ -51,3 +51,10 @@ compileJava {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+task downloadDependencies() {
+    description 'Download all dependencies to the Gradle cache'
+    doLast {
+        configurations.findAll { it.canBeResolved }.files
+    }
+}
