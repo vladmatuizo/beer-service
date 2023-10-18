@@ -13,11 +13,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -35,7 +32,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(RestDocumentationExtension.class)
@@ -49,6 +45,8 @@ class BeerControllerTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+
+    final ConstrainedFields fields = new ConstrainedFields(BeerDto.class);
 
     BeerDto validBeer;
 
@@ -136,13 +134,27 @@ class BeerControllerTest {
                 .build();
         given(beerService.create(any())).willReturn(savedDto);
 
-        final ConstrainedFields fields = new ConstrainedFields(BeerDto.class);
-
         mockMvc.perform(post("/api/v1/beer/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated())
                 .andDo(createCreateBeerDocument(fields));
+    }
+
+    private static RestDocumentationResultHandler createUpdateBeerDocument(final ConstrainedFields fields) {
+        return document("v1/beer-update",
+                requestFields(
+                        fields.withPath("id").ignored(),
+                        fields.withPath("version").ignored(),
+                        fields.withPath("createdDate").ignored(),
+                        fields.withPath("lastModifiedDate").ignored(),
+                        fields.withPath("beerName").description("Beer Name"),
+                        fields.withPath("beerStyle").description("Beer Style"),
+                        fields.withPath("upc").description("UPC of Beer").attributes(),
+                        fields.withPath("price").description("Price"),
+                        fields.withPath("quantityOnHand").ignored()
+                )
+        );
     }
 
     @Test
@@ -156,22 +168,7 @@ class BeerControllerTest {
         mockMvc.perform(put("/api/v1/beer/" + UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isNoContent());
-    }
-
-    private static class ConstrainedFields {
-
-        private final ConstraintDescriptions constraintDescriptions;
-
-        ConstrainedFields(Class<?> input) {
-            this.constraintDescriptions = new ConstraintDescriptions(input);
-        }
-
-        private FieldDescriptor withPath(String path) {
-            return fieldWithPath(path).attributes(key("constraints")
-                    .value(StringUtils.collectionToDelimitedString(
-                            this.constraintDescriptions.descriptionsForProperty(path), ". "
-                    )));
-        }
+                .andExpect(status().isNoContent())
+                .andDo(createUpdateBeerDocument(fields));
     }
 }
