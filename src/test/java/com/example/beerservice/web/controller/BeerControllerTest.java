@@ -6,22 +6,40 @@ import com.example.beerservice.web.model.BeerStyle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ExtendWith(RestDocumentationExtension.class)
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "beer.service.host", uriPort = 80)
 @WebMvcTest(BeerController.class)
 class BeerControllerTest {
 
@@ -38,24 +56,75 @@ class BeerControllerTest {
     public void setUp() {
         this.validBeer = BeerDto.builder()
                 .id(UUID.randomUUID())
+                .version(1)
+                .createdDate(OffsetDateTime.now())
+                .lastModifiedDate(OffsetDateTime.now())
                 .beerName("Beer1")
                 .beerStyle(BeerStyle.LAGER)
                 .upc(10L)
                 .price(BigDecimal.ONE)
+                .quantityOnHand(1)
                 .build();
+    }
+
+    private static RestDocumentationResultHandler createGetBeerByIdDocument() {
+        return document("v1/beer-get",
+                pathParameters(
+                        parameterWithName("id").description("UUID of desired beer to get.")
+                ),
+                queryParameters(
+                        parameterWithName("isCold").description("Is beer cold query parameter (for demo purpose).")
+                ),
+                responseFields(
+                        fieldWithPath("id").description("Id of the beer"),
+                        fieldWithPath("version").description("Version number"),
+                        fieldWithPath("createdDate").description("Date Created"),
+                        fieldWithPath("lastModifiedDate").description("Last Modified date"),
+                        fieldWithPath("beerName").description("Beer Name"),
+                        fieldWithPath("beerStyle").description("Beer Style"),
+                        fieldWithPath("upc").description("UPC of Beer"),
+                        fieldWithPath("price").description("Price"),
+                        fieldWithPath("quantityOnHand").description("Quantity On Hand")
+                )
+        );
     }
 
     @Test
     void getBeer() throws Exception {
-        mockMvc.perform(get("/api/v1/beer/" + UUID.randomUUID())
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+
+        given(beerService.getBeerById(any())).willReturn(validBeer);
+
+        mockMvc.perform(get("/api/v1/beer/{id}", UUID.randomUUID())
+                        // param for docs demonstration purpose
+                        .param("isCold", "true")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(createGetBeerByIdDocument());
+    }
+
+    private static RestDocumentationResultHandler createCreateBeerDocument(final ConstrainedFields fields) {
+        return document("v1/beer-create",
+                requestFields(
+                        fields.withPath("id").ignored(),
+                        fields.withPath("version").ignored(),
+                        fields.withPath("createdDate").ignored(),
+                        fields.withPath("lastModifiedDate").ignored(),
+                        fields.withPath("beerName").description("Beer Name"),
+                        fields.withPath("beerStyle").description("Beer Style"),
+                        fields.withPath("upc").description("UPC of Beer").attributes(),
+                        fields.withPath("price").description("Price"),
+                        fields.withPath("quantityOnHand").ignored()
+                )
+        );
     }
 
     @Test
     void createBeer() throws Exception {
         final BeerDto beerDto = validBeer;
         beerDto.setId(null);
+        beerDto.setVersion(null);
+        beerDto.setCreatedDate(null);
+        beerDto.setLastModifiedDate(null);
 
         final String json = objectMapper.writeValueAsString(beerDto);
 
@@ -67,10 +136,13 @@ class BeerControllerTest {
                 .build();
         given(beerService.create(any())).willReturn(savedDto);
 
+        final ConstrainedFields fields = new ConstrainedFields(BeerDto.class);
+
         mockMvc.perform(post("/api/v1/beer/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isCreated());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated())
+                .andDo(createCreateBeerDocument(fields));
     }
 
     @Test
@@ -85,5 +157,21 @@ class BeerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isNoContent());
+    }
+
+    private static class ConstrainedFields {
+
+        private final ConstraintDescriptions constraintDescriptions;
+
+        ConstrainedFields(Class<?> input) {
+            this.constraintDescriptions = new ConstraintDescriptions(input);
+        }
+
+        private FieldDescriptor withPath(String path) {
+            return fieldWithPath(path).attributes(key("constraints")
+                    .value(StringUtils.collectionToDelimitedString(
+                            this.constraintDescriptions.descriptionsForProperty(path), ". "
+                    )));
+        }
     }
 }
