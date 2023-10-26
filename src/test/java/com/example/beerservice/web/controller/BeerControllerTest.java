@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -34,6 +35,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("test")
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs(uriScheme = "https", uriHost = "beer.service.host", uriPort = 80)
 @WebMvcTest(BeerController.class)
@@ -59,7 +61,7 @@ class BeerControllerTest {
                 .lastModifiedDate(OffsetDateTime.now())
                 .beerName("Beer1")
                 .beerStyle(BeerStyle.LAGER)
-                .upc(10L)
+                .upc("1123213112312")
                 .price(BigDecimal.ONE)
                 .quantityOnHand(1)
                 .build();
@@ -129,7 +131,7 @@ class BeerControllerTest {
         final BeerDto savedDto = BeerDto.builder()
                 .id(UUID.randomUUID())
                 .beerName("Beer1")
-                .upc(10L)
+                .upc("1123213112312")
                 .price(BigDecimal.ONE)
                 .build();
         given(beerService.create(any())).willReturn(savedDto);
@@ -161,7 +163,7 @@ class BeerControllerTest {
     void updateBeer() throws Exception {
         final BeerDto beerDto = BeerDto.builder()
                 .beerName("Beer1")
-                .upc(10L)
+                .upc("1123213112312")
                 .price(BigDecimal.ONE)
                 .build();
         final String json = objectMapper.writeValueAsString(beerDto);

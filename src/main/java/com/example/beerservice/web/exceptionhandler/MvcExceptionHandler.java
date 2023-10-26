@@ -1,5 +1,6 @@
 package com.example.beerservice.web.exceptionhandler;
 
+import com.example.beerservice.web.exception.NotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
@@ -23,5 +24,9 @@ public class MvcExceptionHandler {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<List<ObjectError>> handleValidationError(BindException e) {
         return ResponseEntity.badRequest().body(e.getAllErrors());
+    }
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<List<ObjectError>> handleNotFoundException(NotFoundException e) {
+        return ResponseEntity.notFound().build();
     }
 }
