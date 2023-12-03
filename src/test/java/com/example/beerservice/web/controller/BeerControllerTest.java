@@ -22,6 +22,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -92,7 +93,7 @@ class BeerControllerTest {
     @Test
     void getBeer() throws Exception {
 
-        given(beerService.getBeerById(any())).willReturn(validBeer);
+        given(beerService.getBeerById(any(), anyBoolean())).willReturn(validBeer);
 
         mockMvc.perform(get("/api/v1/beer/{id}", UUID.randomUUID())
                         // param for docs demonstration purpose
