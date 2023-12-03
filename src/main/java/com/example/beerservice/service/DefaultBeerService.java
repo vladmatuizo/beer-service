@@ -65,9 +65,10 @@ public class DefaultBeerService implements BeerService {
         return showInventoryOnHand ? beerMapper.mapToBeerDtoWithInventory(beer) : beerMapper.mapToBeerDto(beer);
     }
 
+    @Cacheable(cacheNames = "beerUpcCache")
     @Override
     public BeerDto getBeerByUpc(final String upc) {
-        return null;
+        return beerMapper.mapToBeerDto(beerRepository.findByUpc(upc));
     }
 
     @Override

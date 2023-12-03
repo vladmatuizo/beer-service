@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.UUID;
 
-@RequestMapping("/api/v1/beer")
+@RequestMapping("/api/v1")
 @RestController
 @RequiredArgsConstructor
 public class BeerController {
@@ -30,7 +30,7 @@ public class BeerController {
 
     private final BeerService beerService;
 
-    @GetMapping
+    @GetMapping("/beer")
     public BeerPagedList listBeers(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
                                    @RequestParam(value = "pageSize", required = false) Integer pageSize,
                                    @RequestParam(value = "beerName", required = false) String beerName,
@@ -45,13 +45,17 @@ public class BeerController {
         return beerService.listBeers(beerName, beerStyle, PageRequest.of(pageNumber, pageSize), showInventoryOnHand);
     }
 
-    @GetMapping("/{beerId}")
-    public ResponseEntity<BeerDto> getBeer(@PathVariable UUID beerId,
+    @GetMapping("/beer/{beerId}")
+    public ResponseEntity<BeerDto> getBeerById(@PathVariable UUID beerId,
                                            @RequestParam(value = "showInventoryOnHand", required = false, defaultValue = "false") boolean showInventoryOnHand) {
         return ResponseEntity.ok(beerService.getBeerById(beerId, showInventoryOnHand));
     }
+    @GetMapping("/beerUpc/{upc}")
+    public ResponseEntity<BeerDto> getBeerByUpc(@PathVariable String upc) {
+        return ResponseEntity.ok(beerService.getBeerByUpc(upc));
+    }
 
-    @PostMapping("/")
+    @PostMapping("/beer")
     public ResponseEntity<?> createBeer(@Valid @RequestBody BeerDto beerDto) {
         final BeerDto savedBeer = beerService.create(beerDto);
         return ResponseEntity
@@ -59,7 +63,7 @@ public class BeerController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/beer/{id}")
     public ResponseEntity<?> updateBeer(@PathVariable UUID id, @Valid @RequestBody BeerDto beerDto) {
         beerService.update(id, beerDto);
         return ResponseEntity.noContent().build();
