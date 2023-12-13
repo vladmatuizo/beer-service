@@ -4,7 +4,7 @@ import com.example.beerservice.domain.Beer;
 import com.example.beerservice.service.inventory.BeerInventoryService;
 import com.example.beerservice.web.model.BeerDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public abstract class BeerMapperDecorator implements BeerMapper {
 
@@ -17,8 +17,9 @@ public abstract class BeerMapperDecorator implements BeerMapper {
     }
 
     @Autowired
-    public void setMapper(BeerMapper mapper) {
-        this.delegate = mapper;
+    @Qualifier("delegate")
+    public void setMapper(BeerMapper delegate) {
+        this.delegate = delegate;
     }
 
     @Override
