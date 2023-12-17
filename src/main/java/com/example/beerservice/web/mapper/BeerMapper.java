@@ -1,7 +1,7 @@
 package com.example.beerservice.web.mapper;
 
 import com.example.beerservice.domain.Beer;
-import com.example.beerservice.web.model.BeerDto;
+import com.example.common.model.BeerDto;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 

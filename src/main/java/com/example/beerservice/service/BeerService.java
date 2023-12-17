@@ -1,8 +1,8 @@
 package com.example.beerservice.service;
 
-import com.example.beerservice.web.model.BeerDto;
-import com.example.beerservice.web.model.BeerPagedList;
-import com.example.beerservice.web.model.BeerStyle;
+import com.example.common.model.BeerDto;
+import com.example.common.model.BeerPagedList;
+import com.example.common.model.BeerStyle;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.UUID;

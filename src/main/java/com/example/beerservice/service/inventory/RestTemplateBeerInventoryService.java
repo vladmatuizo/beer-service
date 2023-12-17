@@ -36,7 +36,7 @@ public class RestTemplateBeerInventoryService implements BeerInventoryService {
 
         final ResponseEntity<List<BeerInventoryDto>> responseEntity = restTemplate.exchange(
                 beerInventoryServiceConfiguration.host() + INVENTORY_PATH,
-                HttpMethod.GET, null, ParameterizedTypeReference.forType(List.class), beerId);
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, beerId);
 
         return Objects.requireNonNull(responseEntity.getBody())
                 .stream()

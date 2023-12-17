@@ -1,8 +1,8 @@
 package com.example.beerservice.web.controller;
 
 import com.example.beerservice.service.BeerService;
-import com.example.beerservice.web.model.BeerDto;
-import com.example.beerservice.web.model.BeerStyle;
+import com.example.common.model.BeerDto;
+import com.example.common.model.BeerStyle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

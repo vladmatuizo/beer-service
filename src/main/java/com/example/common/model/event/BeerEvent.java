@@ -1,15 +1,19 @@
-package com.example.beerservice.event;
+package com.example.common.model.event;
 
-import com.example.beerservice.web.model.BeerDto;
+import com.example.common.model.BeerDto;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class BeerEvent implements Serializable {
     @Serial
     private static final long serialVersionUID = -1020902357931248340L;
 
-    private final BeerDto beerDto;
+    private BeerDto beerDto;
 }

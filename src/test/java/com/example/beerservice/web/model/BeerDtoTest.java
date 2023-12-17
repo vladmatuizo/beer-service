@@ -1,5 +1,7 @@
 package com.example.beerservice.web.model;
 
+import com.example.common.model.BeerDto;
+import com.example.common.model.BeerStyle;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

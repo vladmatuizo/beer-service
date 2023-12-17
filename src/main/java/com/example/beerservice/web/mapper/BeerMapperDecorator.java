@@ -2,7 +2,7 @@ package com.example.beerservice.web.mapper;
 
 import com.example.beerservice.domain.Beer;
 import com.example.beerservice.service.inventory.BeerInventoryService;
-import com.example.beerservice.web.model.BeerDto;
+import com.example.common.model.BeerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 

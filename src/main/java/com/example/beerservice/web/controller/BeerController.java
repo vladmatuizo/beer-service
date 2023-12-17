@@ -1,9 +1,9 @@
 package com.example.beerservice.web.controller;
 
 import com.example.beerservice.service.BeerService;
-import com.example.beerservice.web.model.BeerDto;
-import com.example.beerservice.web.model.BeerPagedList;
-import com.example.beerservice.web.model.BeerStyle;
+import com.example.common.model.BeerDto;
+import com.example.common.model.BeerPagedList;
+import com.example.common.model.BeerStyle;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

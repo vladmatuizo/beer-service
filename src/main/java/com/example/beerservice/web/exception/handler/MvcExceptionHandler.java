@@ -1,4 +1,4 @@
-package com.example.beerservice.web.exceptionhandler;
+package com.example.beerservice.web.exception.handler;
 
 import com.example.beerservice.web.exception.NotFoundException;
 import jakarta.validation.ConstraintViolation;

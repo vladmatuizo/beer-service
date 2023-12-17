@@ -1,4 +1,4 @@
-package com.example.beerservice.web.model;
+package com.example.common.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;

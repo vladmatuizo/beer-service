@@ -1,7 +1,7 @@
 package com.example.beerservice.repository;
 
 import com.example.beerservice.domain.Beer;
-import com.example.beerservice.web.model.BeerStyle;
+import com.example.common.model.BeerStyle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
