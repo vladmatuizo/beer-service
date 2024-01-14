@@ -23,7 +23,8 @@ import java.util.UUID;
 @RequestMapping("/api/v1")
 @RestController
 @RequiredArgsConstructor
-public class BeerController {
+public class
+BeerController {
 
     private static final Integer DEFAULT_PAGE_NUMBER = 0;
     private static final Integer DEFAULT_PAGE_SIZE = 25;
